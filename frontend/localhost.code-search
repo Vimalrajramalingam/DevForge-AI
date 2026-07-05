@@ -1,0 +1,38 @@
+# Query: localhost
+# ContextLines: 1
+
+9 results - 5 files
+
+README.md:
+  106      ```
+  107:     *   The server will start at `http://localhost:8000`
+  108:     *   API docs are available at `http://localhost:8000/docs`
+  109  
+
+  129  3.  Configure server address (if running backend on a different port/IP):
+  130:     *   Launch the app, navigate to **Settings**, and update the **API Base URL** text field (defaults to `http://localhost:8000`).
+  131  
+
+walkthrough.md:
+   9  
+  10: > **[http://localhost:8000/](http://localhost:8000/)**
+  11  
+
+backend\test_api.py:
+  3  
+  4: BASE_URL = "http://localhost:8000"
+  5  
+
+frontend\lib\core\api_client.dart:
+   8    // Default URL of the FastAPI server
+   9:   String _baseUrl = 'https://devforge-ai-backend-33bk.onrender.com';
+  10    
+
+  28      final prefs = await SharedPreferences.getInstance();
+  29:     _baseUrl = prefs.getString('api_base_url') ?? 'https://devforge-ai-backend-33bk.onrender.com';
+  30    }
+
+frontend\lib\screens\settings_screen.dart:
+  114                      decoration: const InputDecoration(
+  115:                       hintText: "http://localhost:8000",
+  116                        prefixIcon: Icon(Icons.link),

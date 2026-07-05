@@ -112,7 +112,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   TextField(
                     controller: _apiUrlController,
                     decoration: const InputDecoration(
-                      hintText: "http://localhost:8000",
+                      hintText: "https://devforge-ai-backend-33bk.onrender.com",
                       prefixIcon: Icon(Icons.link),
                     ),
                   ),
