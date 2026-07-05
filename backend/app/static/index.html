@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevForge AI - AI Software Project Manager</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0d0e12;
+            --surface-color: rgba(21, 23, 31, 0.6);
+            --surface-solid: #15171f;
+            --border-color: rgba(35, 38, 48, 0.6);
+            --primary-blue: #3b82f6;
+            --secondary-emerald: #10b981;
+            --accent-indigo: #6366f1;
+            --risk-red: #ef4444;
+            --text-primary: #ffffff;
+            --text-secondary: #9ca3af;
+            --font-outfit: 'Outfit', sans-serif;
+            --font-inter: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        .light-mode {
+            --bg-color: #f8fafc;
+            --surface-color: rgba(255, 255, 255, 0.7);
+            --surface-solid: #ffffff;
+            --border-color: rgba(226, 232, 240, 0.8);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            font-family: var(--font-inter);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism utility */
+        .glass-card {
+            background: var(--surface-color);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        /* Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        /* Layout Structure */
+        #app-root {
+            display: flex;
+            min-height: 100vh;
+            width: 100vw;
+        }
+
+        /* Authentication Screens */
+        .auth-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 100vh;
+            padding: 24px;
+            background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 40%),
+                        radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.08), transparent 40%);
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 440px;
+            padding: 32px;
+            margin-top: 24px;
+        }
+
+        .auth-logo {
+            font-size: 56px;
+            color: var(--primary-blue);
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            margin-bottom: 12px;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-outfit);
+            font-weight: 700;
+        }
+
+        .brand-title {
+            font-size: 28px;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .brand-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: rgba(0, 0, 0, 0.2);
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 1px var(--primary-blue);
+        }
+
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .checkbox-container input {
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+            gap: 8px;
+            font-family: var(--font-outfit);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: #ffffff;
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-danger {
+            background-color: var(--risk-red);
+            color: #ffffff;
+        }
+
+        .auth-toggle-link {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* App Shell Navigation & Layout */
+        .sidebar {
+            width: 260px;
+            min-height: 100vh;
+            border-right: 1px solid var(--border-color);
+            background-color: var(--surface-solid);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand {
+            padding: 24px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+        }
+
+        .sidebar-brand i {
+            color: var(--primary-blue);
+            font-size: 24px;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 12px;
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            margin-bottom: 6px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            gap: 12px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--primary-blue);
+        }
+
+        .sidebar-profile {
+            padding: 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(59, 130, 246, 0.2);
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-family: var(--font-outfit);
+        }
+
+        .profile-info {
+            flex-grow: 1;
+            overflow: hidden;
+            font-size: 13px;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-email {
+            color: var(--text-secondary);
+            font-size: 11px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 6px;
+        }
+        .logout-btn:hover {
+            color: var(--risk-red);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .top-navbar {
+            height: 64px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            background-color: var(--bg-color);
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-family: var(--font-outfit);
+        }
+
+        .view-panel {
+            padding: 32px;
+            flex-grow: 1;
+        }
+
+        /* Dashboard view */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .welcome-text {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-bottom: 36px;
+        }
+
+        .stat-tile {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .stat-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .recent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .project-card {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            min-height: 180px;
+        }
+        .project-card:hover {
+            border-color: var(--primary-blue);
+        }
+
+        .project-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .project-card-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .badge {
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--primary-blue);
+        }
+
+        .project-card-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            flex-grow: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .project-card-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 12px;
+        }
+
+        /* Modal dialog */
+        .modal {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 520px;
+            padding: 28px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-body {
+            margin-bottom: 24px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* Project Detail Workstation layout */
+        .workstation-container {
+            display: flex;
+            height: calc(100vh - 64px);
+            width: 100%;
+        }
+
+        .workstation-nav {
+            width: 250px;
+            border-right: 1px solid var(--border-color);
+            background-color: var(--surface-solid);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .agent-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            gap: 12px;
+        }
+        .agent-link:hover, .agent-link.active {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--primary-blue);
+        }
+
+        .workstation-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .workstation-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .agent-status {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: var(--secondary-emerald);
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        .agent-status i {
+            font-size: 8px;
+        }
+
+        .workstation-content {
+            padding: 32px;
+            flex-grow: 1;
+        }
+
+        /* Empty state styling */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 64px 0;
+            text-align: center;
+        }
+
+        .empty-state i {
+            font-size: 56px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        /* Markdown report styles */
+        .markdown-body {
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        .markdown-body h1 {
+            font-size: 18px;
+            color: var(--primary-blue);
+            margin: 24px 0 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
+        }
+        .markdown-body h2 {
+            font-size: 15px;
+            margin: 18px 0 8px 0;
+        }
+        .markdown-body p {
+            margin-bottom: 12px;
+        }
+        .markdown-body ul {
+            margin-bottom: 16px;
+            padding-left: 20px;
+        }
+        .markdown-body li {
+            margin-bottom: 4px;
+        }
+
+        /* Specialized Agent Views */
+        /* Database DDL code box */
+        .code-container {
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .code-block {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--secondary-emerald);
+            white-space: pre-wrap;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        .copy-btn {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .copy-btn:hover {
+            color: var(--text-primary);
+        }
+
+        /* API Method tags */
+        .api-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--surface-color);
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .api-card-header {
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+        }
+
+        .method-tag {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            min-width: 60px;
+            text-align: center;
+        }
+        .method-get { background-color: rgba(16, 185, 129, 0.1); color: var(--secondary-emerald); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .method-post { background-color: rgba(59, 130, 246, 0.1); color: var(--primary-blue); border: 1px solid rgba(59, 130, 246, 0.2); }
+        .method-put { background-color: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); }
+        .method-delete { background-color: rgba(239, 68, 68, 0.1); color: var(--risk-red); border: 1px solid rgba(239, 68, 68, 0.2); }
+
+        .api-path {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 600;
+            flex-grow: 1;
+        }
+
+        .api-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .api-details {
+            display: none;
+            padding: 16px 18px;
+            border-top: 1px solid var(--border-color);
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Color Palette Card Swatches */
+        .swatch-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            margin-top: 12px;
+        }
+
+        .swatch {
+            flex: 1;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+
+        .swatch-color {
+            width: 100%;
+            height: 48px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .swatch-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .swatch-hex {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+        }
+
+        /* Kanban board style */
+        .kanban-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .kanban-col {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 300px;
+        }
+
+        .kanban-col-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid;
+            padding-bottom: 8px;
+        }
+
+        .kanban-col-todo { border-color: var(--primary-blue); color: var(--primary-blue); }
+        .kanban-col-progress { border-color: #f59e0b; color: #f59e0b; }
+        .kanban-col-done { border-color: var(--secondary-emerald); color: var(--secondary-emerald); }
+
+        .kanban-card {
+            background-color: var(--surface-solid);
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .kanban-card-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .kanban-card-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .kanban-card-btn:hover {
+            color: var(--text-primary);
+        }
+
+        /* History search input */
+        .search-bar {
+            width: 100%;
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 14px 14px 48px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--surface-color);
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-blue);
+        }
+
+        .history-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border-left-color: var(--primary-blue);
+            animation: spin 1s linear infinite;
+            margin: 24px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Settings grid layouts */
+        .settings-card {
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .settings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .settings-row:last-child {
+            border-bottom: none;
+        }
+
+        .settings-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Toast messaging */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: var(--surface-solid);
+            color: var(--text-primary);
+            text-align: center;
+            border-radius: 8px;
+            border: 1px solid var(--primary-blue);
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 30px;
+            font-size: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast">Toast Message</div>
+
+    <div id="app-root">
+        <!-- Content gets dynamically rendered by scripts -->
+    </div>
+
+    <script>
+        // State Management
+        let appState = {
+            authToken: localStorage.getItem('jwt_auth_token') || null,
+            user: null,
+            currentView: 'splash', // 'splash', 'login', 'register', 'dashboard', 'project-detail', 'settings', 'about'
+            projects: [],
+            selectedProject: null,
+            reports: {},
+            activeAgent: 'requirements',
+            isGenerating: false,
+            searchQuery: '',
+            isDarkMode: localStorage.getItem('is_dark_mode_enabled') !== 'false'
+        };
+
+        const BASE_URL = window.location.origin;
+
+        // Apply Dark/Light theme class
+        function applyTheme() {
+            if (appState.isDarkMode) {
+                document.body.classList.remove('light-mode');
+            } else {
+                document.body.classList.add('light-mode');
+            }
+        }
+        applyTheme();
+
+        // Show toast helper
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.borderColor = isError ? 'var(--risk-red)' : 'var(--primary-blue)';
+            toast.className = "show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        // Safe fetch with headers
+        async function apiRequest(path, method = 'GET', body = null) {
+            const headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            };
+            if (appState.authToken) {
+                headers['Authorization'] = `Bearer ${appState.authToken}`;
+            }
+
+            // Read API key override from storage
+            const customApiKey = localStorage.getItem('user_gemini_api_key');
+            if (customApiKey) {
+                headers['X-Gemini-Key'] = customApiKey;
+            }
+
+            const options = { method, headers };
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+
+            try {
+                const response = await fetch(`${BASE_URL}${path}`, options);
+                if (response.status === 401 && appState.currentView !== 'login') {
+                    // Token expired
+                    handleLogout();
+                    throw new Error("Session expired. Please log in.");
+                }
+                
+                // For files export responses
+                const contentType = response.headers.get("content-type");
+                if (contentType && !contentType.includes("application/json")) {
+                    return await response.text();
+                }
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.detail || 'API request failed');
+                }
+                return data;
+            } catch (error) {
+                console.error("API error:", error);
+                throw error;
+            }
+        }
+
+        // Initialize App
+        async function initApp() {
+            renderSplash();
+            if (appState.authToken) {
+                try {
+                    const user = await apiRequest('/api/auth/me');
+                    appState.user = user;
+                    appState.currentView = 'dashboard';
+                    await loadProjects();
+                } catch (e) {
+                    appState.authToken = null;
+                    localStorage.removeItem('jwt_auth_token');
+                    appState.currentView = 'login';
+                }
+            } else {
+                appState.currentView = 'login';
+            }
+            renderApp();
+        }
+
+        async function loadProjects() {
+            try {
+                const projects = await apiRequest('/api/projects');
+                appState.projects = projects;
+            } catch (e) {
+                showToast("Failed to load projects", true);
+            }
+        }
+
+        async function loadProjectReports(projectId) {
+            try {
+                const reportsList = await apiRequest(`/api/projects/${projectId}/reports`);
+                appState.reports = {};
+                reportsList.forEach(rep => {
+                    appState.reports[rep.agent_type] = JSON.parse(rep.content);
+                });
+            } catch (e) {
+                showToast("Failed to load project reports", true);
+            }
+        }
+
+        // Handle forms submissions
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            try {
+                const button = e.target.querySelector('button');
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+                
+                const data = await apiRequest('/api/auth/login', 'POST', { email, password });
+                appState.authToken = data.access_token;
+                appState.user = data.user;
+                localStorage.setItem('jwt_auth_token', data.access_token);
+                
+                appState.currentView = 'dashboard';
+                showToast("Sign in successful!");
+                await loadProjects();
+                renderApp();
+            } catch (err) {
+                showToast(err.message, true);
+                renderApp();
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const confirm = document.getElementById('reg-confirm').value;
+
+            if (password !== confirm) {
+                showToast("Passwords do not match", true);
+                return;
+            }
+
+            try {
+                const button = e.target.querySelector('button');
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
+                
+                await apiRequest('/api/auth/register', 'POST', { email, password, full_name: name });
+                showToast("Account created successfully! Please log in.");
+                appState.currentView = 'login';
+                renderApp();
+            } catch (err) {
+                showToast(err.message, true);
+                renderApp();
+            }
+        }
+
+        async function handleCreateProject(e) {
+            e.preventDefault();
+            const name = document.getElementById('proj-name').value;
+            const description = document.getElementById('proj-desc').value;
+            const target_users = document.getElementById('proj-users').value;
+            const budget = document.getElementById('proj-budget').value;
+            const timeline = document.getElementById('proj-timeline').value;
+
+            try {
+                const newProject = await apiRequest('/api/projects', 'POST', {
+                    name, description, target_users, budget, timeline
+                });
+                
+                appState.projects.unshift(newProject);
+                appState.selectedProject = newProject;
+                appState.reports = {};
+                appState.activeAgent = 'requirements';
+                
+                // Hide modal
+                document.getElementById('project-modal').style.display = 'none';
+                
+                appState.currentView = 'project-detail';
+                renderApp();
+                showToast("Workspace created successfully!");
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function handleRunAgent() {
+            if (!appState.selectedProject) return;
+            const agent = appState.activeAgent;
+            appState.isGenerating = true;
+            renderApp();
+
+            try {
+                const response = await apiRequest(`/api/projects/${appState.selectedProject.id}/generate/${agent}`, 'POST');
+                appState.reports[agent] = response.content;
+                showToast(`${agent.charAt(0).toUpperCase() + agent.slice(1)} generated!`);
+            } catch (err) {
+                showToast(err.message, true);
+            } finally {
+                appState.isGenerating = false;
+                renderApp();
+            }
+        }
+
+        async function handleDuplicateProject(id) {
+            try {
+                const duplicate = await apiRequest(`/api/projects/${id}/duplicate`, 'POST');
+                appState.projects.unshift(duplicate);
+                showToast("Project duplicated successfully!");
+                renderApp();
+            } catch (err) {
+                showToast("Duplication failed", true);
+            }
+        }
+
+        async function handleDeleteProject(id) {
+            if (!confirm("Are you sure you want to delete this software workspace?")) return;
+            try {
+                await apiRequest(`/api/projects/${id}`, 'DELETE');
+                appState.projects = appState.projects.filter(p => p.id !== id);
+                if (appState.selectedProject && appState.selectedProject.id === id) {
+                    appState.selectedProject = null;
+                }
+                showToast("Workspace deleted");
+                renderApp();
+            } catch (err) {
+                showToast("Deletion failed", true);
+            }
+        }
+
+        async function handleExportPlan(format) {
+            if (!appState.selectedProject) return;
+            try {
+                const text = await apiRequest(`/api/projects/${appState.selectedProject.id}/export/${format}`);
+                
+                // Trigger download in browser
+                const blob = new Blob([text], { type: format === 'json' ? 'application/json' : 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `project_${appState.selectedProject.id}_export.${format === 'pdf' ? 'html' : format}`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                showToast("Export completed successfully!");
+            } catch (err) {
+                showToast("Export failed", true);
+            }
+        }
+
+        function handleLogout() {
+            appState.authToken = null;
+            appState.user = null;
+            localStorage.removeItem('jwt_auth_token');
+            appState.currentView = 'login';
+            renderApp();
+            showToast("Logged out successfully");
+        }
+
+        // --- Render UI Modules ---
+
+        function renderSplash() {
+            const root = document.getElementById('app-root');
+            root.innerHTML = `
+                <div class="auth-container">
+                    <i class="fas fa-psychology auth-logo"></i>
+                    <h1 class="brand-title">DevForge AI</h1>
+                    <p style="color: var(--text-secondary); margin-bottom: 32px;">Initializing Software Workspaces...</p>
+                    <div class="spinner"></div>
+                </div>
+            `;
+        }
+
+        function renderApp() {
+            const root = document.getElementById('app-root');
+            root.innerHTML = '';
+
+            if (appState.currentView === 'login') {
+                renderLoginView(root);
+            } else if (appState.currentView === 'register') {
+                renderRegisterView(root);
+            } else {
+                // Shell layout: Side navigation + main workstation
+                const shell = document.createElement('div');
+                shell.style.display = 'flex';
+                shell.style.width = '100%';
+                
+                renderSidebar(shell);
+                
+                const main = document.createElement('div');
+                main.className = 'main-content';
+                
+                renderTopNavbar(main);
+                
+                const body = document.createElement('div');
+                body.className = 'view-panel';
+                
+                if (appState.currentView === 'dashboard') {
+                    renderDashboardView(body);
+                } else if (appState.currentView === 'project-detail') {
+                    renderProjectDetailView(body);
+                } else if (appState.currentView === 'settings') {
+                    renderSettingsView(body);
+                } else if (appState.currentView === 'about') {
+                    renderAboutView(body);
+                }
+                
+                main.appendChild(body);
+                shell.appendChild(main);
+                root.appendChild(shell);
+            }
+        }
+
+        function renderLoginView(container) {
+            container.innerHTML = `
+                <div class="auth-container">
+                    <i class="fas fa-brain auth-logo"></i>
+                    <h1 class="brand-title">DevForge AI</h1>
+                    <p class="brand-subtitle">Log in to manage your AI Software Projects</p>
+                    
+                    <div class="glass-card auth-card">
+                        <form onsubmit="handleLogin(event)">
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <div class="input-wrapper">
+                                    <i class="far fa-envelope"></i>
+                                    <input type="email" id="login-email" class="form-input" required placeholder="architect@DevForge.ai">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="login-password" class="form-input" required placeholder="••••••••">
+                                </div>
+                            </div>
+                            <div class="form-checkbox">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" checked> Remember Me
+                                </label>
+                                <span class="auth-toggle-link" onclick="showToast('Password recovery is a simulation. Click Register below to create a new user.')">Forgot Password?</span>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+                        </form>
+                    </div>
+                    
+                    <p style="margin-top: 24px; font-size: 14px; color: var(--text-secondary)">
+                        Don't have an account? 
+                        <span class="auth-toggle-link" onclick="appState.currentView='register'; renderApp();">Sign Up</span>
+                    </p>
+                </div>
+            `;
+        }
+
+        function renderRegisterView(container) {
+            container.innerHTML = `
+                <div class="auth-container">
+                    <h1 class="brand-title">Create Account</h1>
+                    <p class="brand-subtitle">Sign up to get started with DevForge AI</p>
+                    
+                    <div class="glass-card auth-card">
+                        <form onsubmit="handleRegister(event)">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <div class="input-wrapper">
+                                    <i class="far fa-user"></i>
+                                    <input type="text" id="reg-name" class="form-input" required placeholder="John Doe">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <div class="input-wrapper">
+                                    <i class="far fa-envelope"></i>
+                                    <input type="email" id="reg-email" class="form-input" required placeholder="user@example.com">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="reg-password" class="form-input" required minlength="6" placeholder="••••••••">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm Password</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="reg-confirm" class="form-input" required minlength="6" placeholder="••••••••">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Sign Up</button>
+                        </form>
+                    </div>
+                    
+                    <p style="margin-top: 24px; font-size: 14px; color: var(--text-secondary)">
+                        Already have an account? 
+                        <span class="auth-toggle-link" onclick="appState.currentView='login'; renderApp();">Sign In</span>
+                    </p>
+                </div>
+            `;
+        }
+
+        function renderSidebar(container) {
+            const userName = appState.user ? appState.user.full_name : 'User';
+            const userEmail = appState.user ? appState.user.email : 'user@example.com';
+            const firstLetter = userName.charAt(0).toUpperCase();
+
+            const sidebar = document.createElement('div');
+            sidebar.className = 'sidebar';
+            sidebar.innerHTML = `
+                <div class="sidebar-brand">
+                    <i class="fas fa-brain"></i>
+                    <h2>DevForge AI</h2>
+                </div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <span class="nav-link ${appState.currentView === 'dashboard' ? 'active' : ''}" onclick="appState.currentView='dashboard'; renderApp();">
+                            <i class="fas fa-chart-pie"></i> Workspace Hub
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link ${appState.currentView === 'settings' ? 'active' : ''}" onclick="appState.currentView='settings'; renderApp();">
+                            <i class="fas fa-sliders"></i> System Settings
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link ${appState.currentView === 'about' ? 'active' : ''}" onclick="appState.currentView='about'; renderApp();">
+                            <i class="fas fa-info-circle"></i> Technical About
+                        </span>
+                    </li>
+                </ul>
+                <div class="sidebar-profile">
+                    <div class="avatar">${firstLetter}</div>
+                    <div class="profile-info">
+                        <div class="profile-name">${userName}</div>
+                        <div class="profile-email">${userEmail}</div>
+                    </div>
+                    <button class="logout-btn" onclick="handleLogout()" title="Sign Out">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(sidebar);
+        }
+
+        function renderTopNavbar(container) {
+            const nav = document.createElement('div');
+            nav.className = 'top-navbar';
+            
+            let title = "Dashboard";
+            if (appState.currentView === 'project-detail' && appState.selectedProject) {
+                title = `Workspace: ${appState.selectedProject.name}`;
+            } else if (appState.currentView === 'settings') {
+                title = "Preferences Configuration";
+            } else if (appState.currentView === 'about') {
+                title = "Technical Blueprint Specifications";
+            }
+
+            nav.innerHTML = `
+                <div class="page-title">${title}</div>
+                <div style="display:flex; gap:12px;">
+                    <button class="btn btn-secondary" onclick="appState.isDarkMode = !appState.isDarkMode; localStorage.setItem('is_dark_mode_enabled', appState.isDarkMode); applyTheme(); renderApp();" title="Toggle Light/Dark Theme">
+                        <i class="fas ${appState.isDarkMode ? 'fa-sun' : 'fa-moon'}"></i>
+                    </button>
+                    ${appState.currentView === 'project-detail' ? `
+                        <button class="btn btn-secondary" onclick="appState.currentView='dashboard'; renderApp();">
+                            <i class="fas fa-arrow-left"></i> Return to Hub
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+            container.appendChild(nav);
+        }
+
+        function renderDashboardView(container) {
+            const count = appState.projects.length;
+            
+            container.innerHTML = `
+                <div class="dashboard-header">
+                    <div>
+                        <h2 class="welcome-text">Software Workspace Hub</h2>
+                        <p style="color: var(--text-secondary); font-size: 14px;">Select an existing architecture project plan or define a new concept.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="document.getElementById('project-modal').style.display='flex';">
+                        <i class="fas fa-plus"></i> New Software Project
+                    </button>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="glass-card stat-tile">
+                        <div class="stat-icon" style="background-color: rgba(59, 130, 246, 0.1); color: var(--primary-blue)">
+                            <i class="fas fa-folder-open"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-label">Active Blueprints</span>
+                            <span class="stat-value">${count} Projects</span>
+                        </div>
+                    </div>
+                    <div class="glass-card stat-tile">
+                        <div class="stat-icon" style="background-color: rgba(16, 185, 129, 0.1); color: var(--secondary-emerald)">
+                            <i class="fas fa-circle-nodes"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-label">AI Agent Engines</span>
+                            <span class="stat-value">9 Specialized Roles</span>
+                        </div>
+                    </div>
+                    <div class="glass-card stat-tile">
+                        <div class="stat-icon" style="background-color: rgba(99, 102, 241, 0.1); color: var(--accent-indigo)">
+                            <i class="fas fa-shield-halved"></i>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-label">SQLite Local DB</span>
+                            <span class="stat-value">Active Persistence</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="search-input" id="proj-search" placeholder="Search saved software plans by name or scope details..." value="${appState.searchQuery}" oninput="appState.searchQuery=this.value; renderFilteredProjects();">
+                </div>
+
+                <div class="section-header">
+                    <h3>Recent Software Workspaces</h3>
+                </div>
+
+                <div class="recent-grid" id="projects-list-container">
+                    <!-- Projects list gets filled by JS -->
+                </div>
+
+                <!-- Create Project Modal Dialog -->
+                <div class="modal" id="project-modal">
+                    <div class="glass-card modal-content">
+                        <div class="modal-header">
+                            <h2>Define Software Concept</h2>
+                            <i class="fas fa-times" style="cursor:pointer;" onclick="document.getElementById('project-modal').style.display='none';"></i>
+                        </div>
+                        <form onsubmit="handleCreateProject(event)">
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label>Concept Title</label>
+                                    <input type="text" id="proj-name" class="form-input" style="padding-left:12px;" required placeholder="e.g. FitTrack mobile app, RealEstate marketplace">
+                                </div>
+                                <div class="form-group">
+                                    <label>Short Description</label>
+                                    <textarea id="proj-desc" class="form-input" style="padding-left:12px; height: 90px; resize: none;" required placeholder="Describe the core features, value proposition, and user actions..."></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Target Audience</label>
+                                    <input type="text" id="proj-users" class="form-input" style="padding-left:12px;" required placeholder="e.g. gym enthusiasts, property agents, homeowners">
+                                </div>
+                                <div style="display:flex; gap:16px;">
+                                    <div class="form-group" style="flex:1;">
+                                        <label>Budget Limit</label>
+                                        <input type="text" id="proj-budget" class="form-input" style="padding-left:12px;" required placeholder="e.g. $15,000, Flexible">
+                                    </div>
+                                    <div class="form-group" style="flex:1;">
+                                        <label>Development Timeline</label>
+                                        <input type="text" id="proj-timeline" class="form-input" style="padding-left:12px;" required placeholder="e.g. 6 weeks, 3 months">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" onclick="document.getElementById('project-modal').style.display='none';">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Create Workspace</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+
+            renderFilteredProjects();
+        }
+
+        function renderFilteredProjects() {
+            const container = document.getElementById('projects-list-container');
+            if (!container) return;
+
+            const filtered = appState.projects.filter(p => {
+                const nameMatch = p.name.toLowerCase().includes(appState.searchQuery.toLowerCase());
+                const descMatch = p.description.toLowerCase().includes(appState.searchQuery.toLowerCase());
+                return nameMatch || descMatch;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <i class="fas fa-folder-open"></i>
+                        <h3>No Workspaces Found</h3>
+                        <p>No project plans match your current search queries.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'glass-card project-card';
+                card.onclick = async () => {
+                    appState.selectedProject = p;
+                    renderSplash();
+                    await loadProjectReports(p.id);
+                    appState.currentView = 'project-detail';
+                    renderApp();
+                };
+                card.innerHTML = `
+                    <div class="project-card-header">
+                        <span class="project-card-title">${p.name}</span>
+                        <span class="badge">Blueprint</span>
+                    </div>
+                    <div class="project-card-desc">${p.description}</div>
+                    <div class="project-card-footer">
+                        <span>Timeline: <strong>${p.timeline}</strong></span>
+                        <span style="color: var(--secondary-emerald)">Budget: <strong>${p.budget}</strong></span>
+                    </div>
+                    <div class="history-actions" onclick="event.stopPropagation();">
+                        <button class="btn btn-secondary" style="padding: 6px 12px; font-size:12px;" onclick="handleDuplicateProject(${p.id})">
+                            <i class="far fa-copy"></i> Duplicate
+                        </button>
+                        <button class="btn btn-danger" style="padding: 6px 12px; font-size:12px;" onclick="handleDeleteProject(${p.id})">
+                            <i class="far fa-trash-can"></i> Delete
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Project details workbench
+        function renderProjectDetailView(container) {
+            const project = appState.selectedProject;
+            if (!project) return;
+
+            const layout = document.createElement('div');
+            layout.className = 'workstation-container';
+            
+            // Sub-sidebar for agents select
+            const nav = document.createElement('div');
+            nav.className = 'workstation-nav';
+            
+            const agents = [
+                { id: 'requirements', name: 'Requirements Analyzer', icon: 'fa-analytics' },
+                { id: 'architecture', name: 'Architecture Designer', icon: 'fa-sitemap' },
+                { id: 'database', name: 'Database Architect', icon: 'fa-database' },
+                { id: 'api', name: 'REST API Generator', icon: 'fa-code' },
+                { id: 'ui', name: 'UI Planner', icon: 'fa-palette' },
+                { id: 'test', name: 'Test Case Generator', icon: 'fa-shield-check' },
+                { id: 'docs', name: 'Documentation Builder', icon: 'fa-file-text' },
+                { id: 'risk', name: 'Risk Evaluator', icon: 'fa-triangle-exclamation' },
+                { id: 'tasks', name: 'Task Planner (Kanban)', icon: 'fa-list-check' }
+            ];
+
+            agents.forEach(a => {
+                const link = document.createElement('div');
+                link.className = `agent-link ${appState.activeAgent === a.id ? 'active' : ''}`;
+                link.onclick = () => {
+                    appState.activeAgent = a.id;
+                    renderApp();
+                };
+                link.innerHTML = `
+                    <i class="fas ${a.icon.includes('fa-') ? a.icon : 'fa-circle'}"></i>
+                    <span>${a.name}</span>
+                `;
+                nav.appendChild(link);
+            });
+
+            // Active workbench area
+            const workbench = document.createElement('div');
+            workbench.className = 'workstation-body';
+
+            const activeAgentObj = agents.find(a => a.id === appState.activeAgent);
+            const reportData = appState.reports[appState.activeAgent];
+            
+            // Action headers
+            const header = document.createElement('div');
+            header.className = 'workstation-header';
+            header.innerHTML = `
+                <div>
+                    <h3 style="font-size:16px;">Agent: ${activeAgentObj.name}</h3>
+                    <div style="font-size:11px; color: var(--text-secondary); margin-top:2px;">Software Concept Blueprint Generator</div>
+                </div>
+                <div style="display:flex; gap:12px; align-items:center;">
+                    ${reportData ? `
+                        <div class="agent-status"><i class="fas fa-circle"></i> Latest Output Active</div>
+                        <button class="btn btn-secondary" style="padding: 8px 16px; font-size:12px;" onclick="handleRunAgent()">
+                            <i class="fas fa-rotate"></i> Regenerate
+                        </button>
+                        <div style="position:relative; display:inline-block;">
+                            <button class="btn btn-secondary" style="padding: 8px 16px; font-size:12px;" onclick="const dropdown = this.nextElementSibling; dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';">
+                                <i class="fas fa-download"></i> Export Options <i class="fas fa-chevron-down" style="font-size:10px; margin-left:4px;"></i>
+                            </button>
+                            <div class="glass-card" style="display:none; position:absolute; right:0; top:36px; min-width:160px; z-index:50; padding:6px 0; background-color: var(--surface-solid);">
+                                <span style="display:block; padding:8px 16px; font-size:12px; cursor:pointer;" onclick="this.parentElement.style.display='none'; handleExportPlan('json')">JSON Blueprint</span>
+                                <span style="display:block; padding:8px 16px; font-size:12px; cursor:pointer;" onclick="this.parentElement.style.display='none'; handleExportPlan('markdown')">Markdown File</span>
+                                <span style="display:block; padding:8px 16px; font-size:12px; cursor:pointer;" onclick="this.parentElement.style.display='none'; handleExportPlan('pdf')">HTML/PDF Printable</span>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            workbench.appendChild(header);
+
+            const content = document.createElement('div');
+            content.className = 'workstation-content';
+
+            if (appState.isGenerating) {
+                // Glow progress loading
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <div class="spinner"></div>
+                        <h3 style="margin-top:16px;">Executing Agent Prompt...</h3>
+                        <p>Invoking Gemini 1.5 REST models to configure software planning specifications.</p>
+                        
+                        <div class="glass-card" style="width:100%; max-width:440px; padding:16px; text-align:left; border-color: var(--primary-blue)">
+                            <div style="display:flex; align-items:center; font-size:12px; margin-bottom:8px; gap:8px;"><i class="fas fa-check-circle" style="color:var(--secondary-emerald)"></i> <span>Extracted target users and timelines...</span></div>
+                            <div style="display:flex; align-items:center; font-size:12px; margin-bottom:8px; gap:8px;"><i class="fas fa-check-circle" style="color:var(--secondary-emerald)"></i> <span>Loaded database connection migrations...</span></div>
+                            <div style="display:flex; align-items:center; font-size:12px; gap:8px;"><i class="fas fa-circle-notch fa-spin" style="color:var(--primary-blue)"></i> <span style="color:var(--primary-blue)">Writing AI report logs to SQLite tables...</span></div>
+                        </div>
+                    </div>
+                `;
+            } else if (!reportData) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-robot"></i>
+                        <h3>Agent Offline</h3>
+                        <p>The ${activeAgentObj.name} has not been executed for this concept blueprint yet.</p>
+                        <button class="btn btn-primary" onclick="handleRunAgent()">
+                            <i class="fas fa-bolt"></i> Run specialized Agent
+                        </button>
+                    </div>
+                `;
+            } else {
+                // Render agent output card
+                renderAgentWorkspace(content, appState.activeAgent, reportData);
+            }
+
+            workbench.appendChild(content);
+            layout.appendChild(nav);
+            layout.appendChild(workbench);
+            container.appendChild(layout);
+        }
+
+        // Specialized agent display builders
+        function renderAgentWorkspace(container, agent, data) {
+            if (agent === 'database') {
+                renderDatabaseWorkspace(container, data);
+            } else if (agent === 'api') {
+                renderApiWorkspace(container, data);
+            } else if (agent === 'ui') {
+                renderUiWorkspace(container, data);
+            } else if (agent === 'tasks') {
+                renderTasksWorkspace(container, data);
+            } else {
+                renderStandardWorkspace(container, data);
+            }
+        }
+
+        function renderStandardWorkspace(container, data) {
+            const div = document.createElement('div');
+            div.className = 'markdown-body';
+            
+            let md = '';
+            for (const [key, val] of Object.entries(data)) {
+                const title = key.replace(/_/g, ' ').toUpperCase();
+                md += `<h1>${title}</h1>`;
+                if (Array.isArray(val)) {
+                    md += '<ul>';
+                    val.forEach(item => {
+                        if (typeof item === 'object') {
+                            let itemStr = '';
+                            for (const [k, v] of Object.entries(item)) {
+                                itemStr += `<strong>${k.toUpperCase()}</strong>: ${v} | `;
+                            }
+                            md += `<li>${itemStr.slice(0, -3)}</li>`;
+                        } else {
+                            md += `<li>${item}</li>`;
+                        }
+                    });
+                    md += '</ul>';
+                } else if (typeof val === 'object') {
+                    md += '<ul>';
+                    for (const [k, v] of Object.entries(val)) {
+                        md += `<li><strong>${k}</strong>: ${v}</li>`;
+                    }
+                    md += '</ul>';
+                } else {
+                    md += `<p>${val.replace(/\n/g, '<br>')}</p>`;
+                }
+            }
+            div.innerHTML = md;
+            container.appendChild(div);
+        }
+
+        function renderDatabaseWorkspace(container, data) {
+            const ddl = data.sql_script || '';
+            const tables = data.tables || [];
+            
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <h4 style="font-size:14px; color: var(--primary-blue); margin-bottom:12px;">UML ENTITY RELATIONSHIP DESIGN</h4>
+                <div class="glass-card" style="padding:16px; font-family:var(--font-mono); font-size:12px; margin-bottom:24px;">
+                    ${data.er_diagram.replace(/\n/g, '<br>')}
+                </div>
+
+                <h4 style="font-size:14px; color: var(--primary-blue); margin-bottom:12px;">TABLES SCHEMA DEFINITIONS</h4>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin-bottom:28px;">
+                    ${tables.map(t => `
+                        <div class="glass-card" style="padding:16px;">
+                            <div style="font-weight:700; font-size:15px; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+                                <i class="fas fa-table" style="color:var(--secondary-emerald)"></i> ${t.name.toUpperCase()}
+                            </div>
+                            <div style="font-size:11px; font-weight:600; color:var(--text-secondary); margin-bottom:4px;">COLUMNS:</div>
+                            <ul style="list-style:none; font-family:var(--font-mono); font-size:12px; margin-bottom:12px;">
+                                ${t.columns.map(c => `<li style="padding:2px 0;">- ${c}</li>`).join('')}
+                            </ul>
+                            ${t.relationships && t.relationships.length ? `
+                                <div style="font-size:11px; font-weight:600; color:var(--text-secondary); margin-bottom:4px;">RELATIONSHIPS:</div>
+                                <ul style="list-style:none; font-size:12px;">
+                                    ${t.relationships.map(r => `<li style="padding:2px 0;">- ${r}</li>`).join('')}
+                                </ul>
+                            ` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h4 style="font-size:14px; color: var(--primary-blue)">SQL DATABASE DDL INSTRUCTIONS</h4>
+                    <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="navigator.clipboard.writeText(document.getElementById('ddl-code').textContent); showToast('SQL DDL copied!');">
+                        <i class="far fa-copy"></i> Copy Script
+                    </button>
+                </div>
+                <div class="code-container">
+                    <pre class="code-block" id="ddl-code">${ddl}</pre>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        function renderApiWorkspace(container, data) {
+            const endpoints = data.endpoints || [];
+            
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <h4 style="font-size:14px; color: var(--primary-blue); margin-bottom:16px;">REST ENDPOINTS MAP</h4>
+                <div>
+                    ${endpoints.map((e, idx) => {
+                        const mLower = e.method.toLowerCase();
+                        return `
+                            <div class="api-card">
+                                <div class="api-card-header" onclick="const detail = this.nextElementSibling; detail.style.display = detail.style.display === 'block' ? 'none' : 'block';">
+                                    <span class="method-tag method-${mLower}">${e.method}</span>
+                                    <span class="api-path">${e.path}</span>
+                                    <span class="api-desc">${e.description}</span>
+                                    <i class="fas fa-chevron-down" style="font-size:12px; color:var(--text-secondary)"></i>
+                                </div>
+                                <div class="api-details">
+                                    <div style="margin-bottom:12px;">
+                                        <div style="font-size:11px; font-weight:600; color:var(--text-secondary); margin-bottom:4px;">REQUEST BODY:</div>
+                                        <pre style="background:rgba(0,0,0,0.2); padding:10px; border-radius:6px; font-family:var(--font-mono); font-size:11px; overflow-x:auto;">${e.request_body}</pre>
+                                    </div>
+                                    <div>
+                                        <div style="font-size:11px; font-weight:600; color:var(--text-secondary); margin-bottom:4px;">REPLY BODY (200 OK):</div>
+                                        <pre style="background:rgba(0,0,0,0.2); padding:10px; border-radius:6px; font-family:var(--font-mono); font-size:11px; color:var(--secondary-emerald); overflow-x:auto;">${e.response}</pre>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        function renderUiWorkspace(container, data) {
+            const palette = data.palette || {};
+            const screens = data.screens || [];
+            
+            const div = document.createElement('div');
+            
+            // Build palette swatch row
+            let swatchHtml = '';
+            for (const [key, hex] of Object.entries(palette)) {
+                swatchHtml += `
+                    <div class="glass-card swatch" onclick="navigator.clipboard.writeText('${hex}'); showToast('Color ${hex} copied!');">
+                        <div class="swatch-color" style="background-color: ${hex};"></div>
+                        <span class="swatch-label">${key}</span>
+                        <span class="swatch-hex">${hex}</span>
+                    </div>
+                `;
+            }
+
+            div.innerHTML = `
+                <h4 style="font-size:14px; color: var(--primary-blue); margin-bottom:8px;">BRAND PALETTE SYSTEM</h4>
+                <div class="swatch-row">${swatchHtml}</div>
+
+                <h4 style="font-size:14px; color: var(--primary-blue); margin-bottom:16px;">SCREENS & COMPONENT HIERARCHY</h4>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+                    ${screens.map(s => `
+                        <div class="glass-card" style="padding:20px;">
+                            <div style="font-weight:700; font-size:16px; margin-bottom:8px;">${s.name}</div>
+                            <p style="font-size:12px; color:var(--text-secondary); margin-bottom:12px;">${s.description}</p>
+                            
+                            <div style="font-size:11px; font-weight:600; color:var(--primary-blue); margin-bottom:4px;">KEY COMPONENTS:</div>
+                            <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;">
+                                ${s.components.map(c => `<span style="font-size:10px; background-color:rgba(255,255,255,0.05); padding:4px 8px; border-radius:4px; border:1px solid var(--border-color);">${c}</span>`).join('')}
+                            </div>
+                            
+                            ${s.navigation && s.navigation.length ? `
+                                <div style="font-size:11px; font-weight:600; color:var(--text-secondary); margin-bottom:4px;">NAVIGATION:</div>
+                                <ul style="list-style:none; font-size:11px;">
+                                    ${s.navigation.map(n => `<li style="padding:2px 0; color:var(--accent-indigo)">→ ${n}</li>`).join('')}
+                                </ul>
+                            ` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        // Kanban Board implementation
+        function renderTasksWorkspace(container, data) {
+            const kanban = data.kanban || { todo: [], in_progress: [], done: [] };
+            
+            // Save local copy to handle transitions
+            if (!container.kanbanData) {
+                container.kanbanData = {
+                    todo: [...(kanban.todo || [])],
+                    in_progress: [...(kanban.in_progress || [])],
+                    done: [...(kanban.done || [])]
+                };
+            }
+            
+            const kData = container.kanbanData;
+
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <h4 style="font-size:14px; color: var(--primary-blue); margin-bottom:16px;">SPRINT BOARD (INTERACTIVE KANBAN)</h4>
+                <div class="kanban-grid">
+                    <div class="glass-card kanban-col">
+                        <div class="kanban-col-header kanban-col-todo">
+                            <span>TO DO</span>
+                            <span>${kData.todo.length}</span>
+                        </div>
+                        <div class="kanban-cards-list" id="col-todo" style="display:flex; flex-direction:column; gap:8px;"></div>
+                    </div>
+                    <div class="glass-card kanban-col">
+                        <div class="kanban-col-header kanban-col-progress">
+                            <span>IN PROGRESS</span>
+                            <span>${kData.in_progress.length}</span>
+                        </div>
+                        <div class="kanban-cards-list" id="col-progress" style="display:flex; flex-direction:column; gap:8px;"></div>
+                    </div>
+                    <div class="glass-card kanban-col">
+                        <div class="kanban-col-header kanban-col-done">
+                            <span>DONE</span>
+                            <span>${kData.done.length}</span>
+                        </div>
+                        <div class="kanban-cards-list" id="col-done" style="display:flex; flex-direction:column; gap:8px;"></div>
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(div);
+            
+            // Render card contents
+            renderKanbanCards(container, kData);
+        }
+
+        function renderKanbanCards(container, kData) {
+            const renderCol = (elementId, list, colId, nextCol, prevCol) => {
+                const colEl = document.getElementById(elementId);
+                if (!colEl) return;
+                
+                if (list.length === 0) {
+                    colEl.innerHTML = `<div style="text-align:center; padding:24px; font-size:11px; color:var(--text-secondary); border:1px dashed var(--border-color); border-radius:6px;">Empty</div>`;
+                    return;
+                }
+
+                colEl.innerHTML = '';
+                list.forEach(task => {
+                    const card = document.createElement('div');
+                    card.className = 'kanban-card';
+                    card.innerHTML = `
+                        <div>${task}</div>
+                        <div class="kanban-card-actions">
+                            ${prevCol ? `<button class="kanban-card-btn" onclick="moveKanbanTask('${task}', '${colId}', '${prevCol}')"><i class="fas fa-chevron-left"></i></button>` : ''}
+                            ${nextCol ? `<button class="kanban-card-btn" onclick="moveKanbanTask('${task}', '${colId}', '${nextCol}')"><i class="fas fa-chevron-right"></i></button>` : ''}
+                        </div>
+                    `;
+                    colEl.appendChild(card);
+                });
+            };
+
+            renderCol('col-todo', kData.todo, 'todo', 'in_progress', null);
+            renderCol('col-progress', kData.in_progress, 'in_progress', 'done', 'todo');
+            renderCol('col-done', kData.done, 'done', null, 'in_progress');
+        }
+
+        window.moveKanbanTask = function(task, fromCol, toCol) {
+            // Find container element holding data
+            const container = document.querySelector('.workstation-content');
+            if (!container || !container.kanbanData) return;
+            
+            const kData = container.kanbanData;
+            
+            // Move item
+            kData[fromCol] = kData[fromCol].filter(t => t !== task);
+            kData[toCol].push(task);
+            
+            // Re-render
+            renderTasksWorkspace(container, { kanban: kData });
+        };
+
+        // Preferences Screen
+        function renderSettingsView(container) {
+            const customKey = localStorage.getItem('user_gemini_api_key') || '';
+            const userName = appState.user ? appState.user.full_name : '';
+
+            container.innerHTML = `
+                <div class="glass-card settings-card" style="margin-bottom:24px;">
+                    <h3 style="font-size:16px; margin-bottom:12px;"><i class="fas fa-key" style="color:var(--primary-blue); margin-right:8px;"></i> Gemini API Configuration</h3>
+                    <p style="font-size:12px; color:var(--text-secondary); margin-bottom:18px;">Update your own Google Gemini API Key. If left empty, DevForge AI utilizes a local Simulation Fallback module.</p>
+                    <div style="display:flex; gap:12px;">
+                        <input type="password" id="gemini-key" class="form-input" style="padding-left:12px; flex-grow:1;" placeholder="Enter AIzaSy..." value="${customKey}">
+                        <button class="btn btn-primary" onclick="localStorage.setItem('user_gemini_api_key', document.getElementById('gemini-key').value.trim()); showToast('Gemini API Key updated!');">Save Key</button>
+                    </div>
+                </div>
+
+                <div class="glass-card settings-card" style="margin-bottom:24px;">
+                    <h3 style="font-size:16px; margin-bottom:12px;"><i class="fas fa-user-gear" style="color:var(--primary-blue); margin-right:8px;"></i> Update Account Profile</h3>
+                    <form onsubmit="handleUpdateProfile(event)">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="profile-name" class="form-input" style="padding-left:12px;" required value="${userName}">
+                        </div>
+                        <div class="form-group">
+                            <label>New Password (Optional)</label>
+                            <input type="password" id="profile-password" class="form-input" style="padding-left:12px;" placeholder="Leave blank to keep current">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+
+                <div class="glass-card settings-card">
+                    <h3 style="font-size:16px; margin-bottom:12px;"><i class="fas fa-sliders" style="color:var(--primary-blue); margin-right:8px;"></i> Interface Customizations</h3>
+                    <div class="settings-row">
+                        <div>
+                            <div>Dark Workspace Appearance</div>
+                            <div class="settings-desc">Toggle Obsidian theme background colors</div>
+                        </div>
+                        <input type="checkbox" ${appState.isDarkMode ? 'checked' : ''} onchange="appState.isDarkMode = this.checked; localStorage.setItem('is_dark_mode_enabled', this.checked); applyTheme(); renderApp();" style="width:20px; height:20px; cursor:pointer;">
+                    </div>
+                    <div class="settings-row">
+                        <div>
+                            <div>Interface Language</div>
+                            <div class="settings-desc">Choose language for screens and options</div>
+                        </div>
+                        <select class="form-input" style="padding-left:12px; width:120px;" onchange="showToast('Language updated (Simulation).')">
+                            <option>English</option>
+                            <option>Spanish</option>
+                            <option>French</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function handleUpdateProfile(e) {
+            e.preventDefault();
+            const name = document.getElementById('profile-name').value;
+            const pwd = document.getElementById('profile-password').value;
+            
+            try {
+                const body = { full_name: name };
+                if (pwd) body.password = pwd;
+                
+                const updated = await apiRequest('/api/auth/update', 'PUT', body);
+                appState.user = updated;
+                showToast("Account profile updated successfully!");
+                renderApp();
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        // About Screen
+        function renderAboutView(container) {
+            container.innerHTML = `
+                <div class="glass-card" style="padding:32px; text-align:center; margin-bottom:28px;">
+                    <i class="fas fa-brain" style="font-size:64px; color:var(--primary-blue); margin-bottom:16px;"></i>
+                    <h2>DevForge AI</h2>
+                    <p style="color:var(--text-secondary); margin-top:8px;">SaaS-style Software Planner & Multi-Agent Simulator Workspace</p>
+                </div>
+
+                <div class="glass-card" style="padding:24px; margin-bottom:24px;">
+                    <h3 style="font-size:16px; margin-bottom:12px; color:var(--primary-blue)">TECHNICAL ARCHITECTURE OVERVIEW</h3>
+                    <p style="font-size:14px; line-height:1.6; color:var(--text-secondary)">
+                        This workspace implements the Clean Architecture and MVVM patterns. The front-end leverages standard API fetching dynamically mapping models, caching tokens inside browser local storages, and rendering structural widgets. The backend is powered by Python FastAPI server routines committing transaction details directly into SQLite relational tables.
+                    </p>
+                </div>
+
+                <div class="glass-card" style="padding:24px;">
+                    <h3 style="font-size:16px; margin-bottom:16px; color:var(--primary-blue)">VIRTUAL AI AGENTS DEFINITIONS</h3>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+                        <div style="border-left:3px solid var(--primary-blue); padding-left:12px;">
+                            <strong style="font-size:13px;">Requirements Analyzer</strong>
+                            <p style="font-size:11px; color:var(--text-secondary); margin-top:4px;">Calculates goals, features scope lists, target audiences, and functional limits.</p>
+                        </div>
+                        <div style="border-left:3px solid var(--primary-blue); padding-left:12px;">
+                            <strong style="font-size:13px;">Architecture Designer</strong>
+                            <p style="font-size:11px; color:var(--text-secondary); margin-top:4px;">Generates tree structural models, suggested technologic frameworks, and workflows.</p>
+                        </div>
+                        <div style="border-left:3px solid var(--primary-blue); padding-left:12px;">
+                            <strong style="font-size:13px;">Database Architect</strong>
+                            <p style="font-size:11px; color:var(--text-secondary); margin-top:4px;">Specifies ER columns, schemas, relationships mapping, and DDL scripts.</p>
+                        </div>
+                        <div style="border-left:3px solid var(--primary-blue); padding-left:12px;">
+                            <strong style="font-size:13px;">REST API Planner</strong>
+                            <p style="font-size:11px; color:var(--text-secondary); margin-top:4px;">Defines routing endpoints, payloads schemas, error handling guidelines.</p>
+                        </div>
+                        <div style="border-left:3px solid var(--primary-blue); padding-left:12px;">
+                            <strong style="font-size:13px;">UI/UX Designer</strong>
+                            <p style="font-size:11px; color:var(--text-secondary); margin-top:4px;">Draws visual palette selections, widgets hierarchy mappings, navigation guides.</p>
+                        </div>
+                        <div style="border-left:3px solid var(--primary-blue); padding-left:12px;">
+                            <strong style="font-size:13px;">QA Test Case Generator</strong>
+                            <p style="font-size:11px; color:var(--text-secondary); margin-top:4px;">Constructs unit/integrations tests scripts structure, edge test cases checks.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Run Initializer
+        initApp();
+    </script>
+</body>
+</html>
