@@ -6,7 +6,7 @@ class ApiClient {
   static const String keyToken = 'jwt_auth_token';
   
   // Default URL of the FastAPI server
-  String _baseUrl = 'https://devforge-ai-backend-33bk.onrender.com';
+  String _baseUrl = 'http://127.0.0.1:18000';
   
   // Singleton instance
   static final ApiClient _instance = ApiClient._internal();
@@ -26,7 +26,7 @@ class ApiClient {
 
   Future<void> _loadBaseUrl() async {
     final prefs = await SharedPreferences.getInstance();
-    _baseUrl = prefs.getString('api_base_url') ?? 'https://devforge-ai-backend-33bk.onrender.com';
+    _baseUrl = prefs.getString('api_base_url') ?? 'http://127.0.0.1:18000';
   }
 
   Future<void> _saveBaseUrl(String url) async {

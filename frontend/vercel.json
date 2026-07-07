@@ -8,8 +8,16 @@
   ],
   "routes": [
     {
+      "src": "/(index.html|flutter.js|flutter_bootstrap.js|flutter_service_worker.js|main.dart.js|main.dart.js.map|manifest.json|favicon.png|version.json)",
+      "dest": "/build/web/$1"
+    },
+    {
+      "src": "/(assets/.*|canvaskit/.*|icons/.*)",
+      "dest": "/build/web/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/build/web/index.html"
     }
   ]
 }
