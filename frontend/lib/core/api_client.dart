@@ -5,8 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ApiClient {
   static const String keyToken = 'jwt_auth_token';
   
-  // Default URL of the FastAPI server
-  String _baseUrl = 'http://127.0.0.1:18000';
+  // Production Render backend URL
+  String _baseUrl = 'https://devforge-ai-backend-33bk.onrender.com';
   
   // Singleton instance
   static final ApiClient _instance = ApiClient._internal();
@@ -26,7 +26,8 @@ class ApiClient {
 
   Future<void> _loadBaseUrl() async {
     final prefs = await SharedPreferences.getInstance();
-    _baseUrl = prefs.getString('api_base_url') ?? 'http://127.0.0.1:18000';
+    _baseUrl = prefs.getString('api_base_url') ??
+        'https://devforge-ai-backend-33bk.onrender.com';
   }
 
   Future<void> _saveBaseUrl(String url) async {
@@ -64,7 +65,8 @@ class ApiClient {
   Future<http.Response> get(String path) async {
     final url = Uri.parse('$_baseUrl$path');
     final headers = await _headers();
-    return http.get(url, headers: headers).timeout(const Duration(seconds: 15));
+    // 30s timeout to handle Render free-tier cold starts
+    return http.get(url, headers: headers).timeout(const Duration(seconds: 30));
   }
 
   Future<http.Response> post(String path, Map<String, dynamic> body) async {
@@ -90,6 +92,6 @@ class ApiClient {
   Future<http.Response> delete(String path) async {
     final url = Uri.parse('$_baseUrl$path');
     final headers = await _headers();
-    return http.delete(url, headers: headers).timeout(const Duration(seconds: 15));
+    return http.delete(url, headers: headers).timeout(const Duration(seconds: 30));
   }
 }

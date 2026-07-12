@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/providers/auth_provider.dart';
 import 'package:frontend/core/theme.dart';
+import 'package:frontend/core/api_client.dart';
 import 'package:frontend/screens/login_screen.dart';
 import 'package:frontend/screens/dashboard_screen.dart';
 
@@ -29,10 +30,21 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     );
     _logoController.forward();
     
+    // Ping backend immediately to wake up Render free-tier cold start
+    _wakeUpBackend();
+    
     // Check authentication after logo animation finishes
     Future.delayed(const Duration(seconds: 2), () {
       _checkAuthentication();
     });
+  }
+
+  Future<void> _wakeUpBackend() async {
+    try {
+      await ApiClient().get('/api/health');
+    } catch (_) {
+      // Silently ignore — just a warm-up ping
+    }
   }
 
   Future<void> _checkAuthentication() async {
